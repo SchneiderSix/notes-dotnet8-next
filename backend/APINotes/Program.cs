@@ -21,6 +21,9 @@ var password = builder.Configuration["password"] ?? "Secret123456!";
 
 var connectionString = $"Server={server};Initial Catalog={db};User ID={user};Password={password};TrustServerCertificate=true;";
 
+// Add services
+builder.Services.AddSwaggerGen();
+
 // Handle migrations on start
 builder.Services.AddDbContext<DataContext>(options =>
 {
