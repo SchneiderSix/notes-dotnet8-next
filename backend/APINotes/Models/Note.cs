@@ -18,15 +18,15 @@ namespace APINotes.Models
         public string Content { get; set; } = null!;
 
         // Categories
-        public List<string> Categories { get; set; } = new();
+        public List<Tag> Tags { get; } = new();
 
         // Handle logic delete
-        public bool isActive { get; set; }
+        public bool IsActive { get; set; }
 
         // Foreign key
         public Guid UserId { get; set; }
 
         // Navigation property
-        public User User { get; set; } = null!;
+        public virtual User User { get; set; } = null!;
     }
 }

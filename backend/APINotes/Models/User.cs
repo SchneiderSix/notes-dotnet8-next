@@ -5,6 +5,7 @@ namespace APINotes.Models
     public class User
     {
         // Primary key
+        [Key]
         public Guid Id { get; set; }
 
         [Required]
@@ -16,11 +17,11 @@ namespace APINotes.Models
         [StringLength(100, ErrorMessage = "{0} value cannot exceed {1} characters.")]
         public string Password { get; set; } = null!;
 
-        // Notes created
-        public List<Note> NotesCreated { get; set; } = new();
+        // Notes created by the user
+        public List<Note> NotesCreated { get; } = new();
 
-        // Notes archived
-        public List<Note> NotesArchived { get; set; } = new();
+        // Notes archived 
+        public List<Note> NotesArchived { get; } = new();
 
         // Logic delete
         public bool IsActive { get; set; }
