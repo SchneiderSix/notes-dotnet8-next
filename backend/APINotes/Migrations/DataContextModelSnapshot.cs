@@ -28,6 +28,9 @@ namespace APINotes.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<Guid?>("ArchivedByUserId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasMaxLength(250)
@@ -44,14 +47,11 @@ namespace APINotes.Migrations
                     b.Property<Guid>("UserId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("UserId1")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("ArchivedByUserId");
 
-                    b.HasIndex("UserId1");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Notes");
                 });
@@ -93,38 +93,38 @@ namespace APINotes.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Username")
-                        .IsUnique();
-
                     b.ToTable("Users");
                 });
 
             modelBuilder.Entity("NoteTag", b =>
                 {
-                    b.Property<Guid>("NotesId")
+                    b.Property<Guid>("NoteId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TagsId")
+                    b.Property<Guid>("TagId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("NotesId", "TagsId");
+                    b.HasKey("NoteId", "TagId");
 
-                    b.HasIndex("TagsId");
+                    b.HasIndex("TagId");
 
-                    b.ToTable("NoteTag");
+                    b.ToTable("NoteTags", (string)null);
                 });
 
             modelBuilder.Entity("APINotes.Models.Note", b =>
                 {
+                    b.HasOne("APINotes.Models.User", "ArchivedByUser")
+                        .WithMany("NotesArchived")
+                        .HasForeignKey("ArchivedByUserId")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("APINotes.Models.User", "User")
                         .WithMany("NotesCreated")
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("APINotes.Models.User", null)
-                        .WithMany("NotesArchived")
-                        .HasForeignKey("UserId1");
+                    b.Navigation("ArchivedByUser");
 
                     b.Navigation("User");
                 });
@@ -133,13 +133,13 @@ namespace APINotes.Migrations
                 {
                     b.HasOne("APINotes.Models.Note", null)
                         .WithMany()
-                        .HasForeignKey("NotesId")
+                        .HasForeignKey("NoteId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("APINotes.Models.Tag", null)
                         .WithMany()
-                        .HasForeignKey("TagsId")
+                        .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

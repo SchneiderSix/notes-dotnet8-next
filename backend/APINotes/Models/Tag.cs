@@ -12,6 +12,7 @@ namespace APINotes.Models
         [StringLength(30, ErrorMessage = "{0} value cannot exceed {1} characters.")]
         public string Name { get; set; } = null!;
 
-        public List<Note> Notes { get; } = [];
+        // Navigation property
+        public List<Note> Notes { get; set; } = new();
     }
 }

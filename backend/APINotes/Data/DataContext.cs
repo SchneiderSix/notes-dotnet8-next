@@ -14,55 +14,43 @@ namespace APINotes.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Configure User entity
-            modelBuilder.Entity<User>(entity =>
-            {
-                // Set primary key
-                entity.HasKey(u => u.Id);
+            // Global Query Filters for IsActive
+            modelBuilder.Entity<User>()
+                .HasQueryFilter(u => u.IsActive);
 
-                // Ensure Username is unique
-                entity.HasIndex(u => u.Username).IsUnique();
+            modelBuilder.Entity<Note>()
+                .HasQueryFilter(n =>  n.IsActive);
 
-                // Configure relationships
-                entity.HasMany(u => u.NotesCreated)
-                      .WithOne(n => n.User)
-                      .HasForeignKey(n => n.UserId)
-                      .OnDelete(DeleteBehavior.Cascade);
+            // User -> NotesCreated relationship
+            modelBuilder.Entity<Note>()
+                .HasOne(n => n.User)
+                .WithMany(u => u.NotesCreated)
+                .HasForeignKey(n => n.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-                // Add global query filter for logical deletion
-                entity.HasQueryFilter(u => u.IsActive);
-            });
+            // User -> NotesArchived relationship
+            modelBuilder.Entity<Note>()
+                .HasOne(n => n.ArchivedByUser)
+                .WithMany(u => u.NotesArchived)
+                .HasForeignKey(n => n.ArchivedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure Note entity
-            modelBuilder.Entity<Note>(entity =>
-            {
-                // Set primary key
-                entity.HasKey(n => n.Id);
-
-                // Configure relationships
-                entity.HasMany(n => n.Tags)
-                      .WithMany(t => t.Notes);
-
-                // Add global query filter for logical deletion
-                entity.HasQueryFilter(n => n.IsActive);
-
-                // Map the foreign key relationship with User
-                entity.HasOne(n => n.User)
-                      .WithMany(u => u.NotesCreated)
-                      .HasForeignKey(n => n.UserId)
-                      .OnDelete(DeleteBehavior.Cascade);
-            });
-
-            // Configure Tag entity
-            modelBuilder.Entity<Tag>(entity =>
-            {
-                // Set primary key
-                entity.HasKey(t => t.Id);
-
-                // Configure relationships
-                entity.HasMany(t => t.Notes)
-                      .WithMany(n => n.Tags);
-            });
+            // Many-to-Many: Note <-> Tag
+            modelBuilder.Entity<Note>()
+                .HasMany(n => n.Tags)
+                .WithMany(t => t.Notes)
+                .UsingEntity<Dictionary<string, object>>(
+                    "NoteTag",
+                    j => j.HasOne<Tag>()
+                          .WithMany()
+                          .HasForeignKey("TagId")
+                          .OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne<Note>()
+                          .WithMany()
+                          .HasForeignKey("NoteId")
+                          .OnDelete(DeleteBehavior.Cascade)
+                )
+                .ToTable("NoteTags");
 
             // Additional configurations
             base.OnModelCreating(modelBuilder);

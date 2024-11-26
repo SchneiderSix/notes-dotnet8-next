@@ -18,12 +18,12 @@ namespace APINotes.Models
         public string Password { get; set; } = null!;
 
         // Notes created by the user
-        public List<Note> NotesCreated { get; } = new();
+        public List<Note> NotesCreated { get; set; } = new();
 
-        // Notes archived 
-        public List<Note> NotesArchived { get; } = new();
+        // Notes archived by the user
+        public List<Note> NotesArchived { get; set; } = new();
 
-        // Logic delete
+        // Logical delete
         public bool IsActive { get; set; }
 
 
