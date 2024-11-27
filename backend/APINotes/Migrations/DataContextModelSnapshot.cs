@@ -22,13 +22,31 @@ namespace APINotes.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("APINotes.Models.Note", b =>
+            modelBuilder.Entity("APINotes.Models.ArchivedNote", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid?>("ArchivedByUserId")
+                    b.Property<Guid>("NoteId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("NoteId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ArchivedNote");
+                });
+
+            modelBuilder.Entity("APINotes.Models.Note", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Content")
@@ -48,8 +66,6 @@ namespace APINotes.Migrations
                         .HasColumnType("uniqueidentifier");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("ArchivedByUserId");
 
                     b.HasIndex("UserId");
 
@@ -98,33 +114,45 @@ namespace APINotes.Migrations
 
             modelBuilder.Entity("NoteTag", b =>
                 {
-                    b.Property<Guid>("NoteId")
+                    b.Property<Guid>("NotesId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("TagId")
+                    b.Property<Guid>("TagsId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.HasKey("NoteId", "TagId");
+                    b.HasKey("NotesId", "TagsId");
 
-                    b.HasIndex("TagId");
+                    b.HasIndex("TagsId");
 
-                    b.ToTable("NoteTags", (string)null);
+                    b.ToTable("NoteTag");
                 });
 
-            modelBuilder.Entity("APINotes.Models.Note", b =>
+            modelBuilder.Entity("APINotes.Models.ArchivedNote", b =>
                 {
-                    b.HasOne("APINotes.Models.User", "ArchivedByUser")
-                        .WithMany("NotesArchived")
-                        .HasForeignKey("ArchivedByUserId")
-                        .OnDelete(DeleteBehavior.Restrict);
+                    b.HasOne("APINotes.Models.Note", "Note")
+                        .WithMany("ArchivedByUsers")
+                        .HasForeignKey("NoteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("APINotes.Models.User", "User")
-                        .WithMany("NotesCreated")
+                        .WithMany("ArchivedNotes")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.Navigation("ArchivedByUser");
+                    b.Navigation("Note");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("APINotes.Models.Note", b =>
+                {
+                    b.HasOne("APINotes.Models.User", "User")
+                        .WithMany("NotesCreated")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("User");
                 });
@@ -133,20 +161,25 @@ namespace APINotes.Migrations
                 {
                     b.HasOne("APINotes.Models.Note", null)
                         .WithMany()
-                        .HasForeignKey("NoteId")
+                        .HasForeignKey("NotesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("APINotes.Models.Tag", null)
                         .WithMany()
-                        .HasForeignKey("TagId")
+                        .HasForeignKey("TagsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("APINotes.Models.Note", b =>
+                {
+                    b.Navigation("ArchivedByUsers");
+                });
+
             modelBuilder.Entity("APINotes.Models.User", b =>
                 {
-                    b.Navigation("NotesArchived");
+                    b.Navigation("ArchivedNotes");
 
                     b.Navigation("NotesCreated");
                 });

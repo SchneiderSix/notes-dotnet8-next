@@ -17,19 +17,15 @@ namespace APINotes.Models
         [StringLength(250, ErrorMessage = "{0} value cannot exceed {1} characters.")]
         public string Content { get; set; } = null!;
 
-        // Foreign key to the user who created the note
+        // Foreign key for the user who created the note
         public Guid UserId { get; set; }
+        public User User { get; set; } = null!;
 
-        // Navigation property for the user who created the note
-        public virtual User User { get; set; } = null!;
+        // Tags associated with note
+        public ICollection<Tag> Tags { get; set; } = new List<Tag>();
 
-        // Tags associated with this note
-        public List<Tag> Tags { get; set; } = new();
-
-        // Archived by user
-        public Guid? ArchivedByUserId { get; set; }
-
-        public virtual User? ArchivedByUser { get; set; }
+        // Note archived by users
+        public ICollection<ArchivedNote> ArchivedByUsers { get; set; } = new List<ArchivedNote>();
 
         // Logical delete
         public bool IsActive { get; set; }

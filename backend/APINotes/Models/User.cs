@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections;
+using System.ComponentModel.DataAnnotations;
 
 namespace APINotes.Models
 {
@@ -18,10 +19,10 @@ namespace APINotes.Models
         public string Password { get; set; } = null!;
 
         // Notes created by the user
-        public List<Note> NotesCreated { get; set; } = new();
+        public ICollection<Note> NotesCreated { get; set; } = new List<Note>();
 
-        // Notes archived by the user
-        public List<Note> NotesArchived { get; set; } = new();
+        // Notes archived
+        public ICollection<ArchivedNote> ArchivedNotes { get; set; } = new List<ArchivedNote>();
 
         // Logical delete
         public bool IsActive { get; set; }

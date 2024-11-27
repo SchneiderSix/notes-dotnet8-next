@@ -25,7 +25,7 @@ namespace APINotes.Controllers
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(loginUser.Password, user.Password)) return BadRequest("Invalid credentials");
 
-            return Ok(new { user!.Username, user.NotesCreated, user.NotesArchived });
+            return Ok(user.Id);
         }
 
         [HttpPost("user/create")]

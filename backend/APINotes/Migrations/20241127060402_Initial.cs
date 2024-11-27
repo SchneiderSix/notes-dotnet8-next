@@ -45,20 +45,38 @@ namespace APINotes.Migrations
                     Title = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
                     Content = table.Column<string>(type: "nvarchar(250)", maxLength: 250, nullable: false),
                     UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    ArchivedByUserId = table.Column<Guid>(type: "uniqueidentifier", nullable: true),
                     IsActive = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Notes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Notes_Users_ArchivedByUserId",
-                        column: x => x.ArchivedByUserId,
+                        name: "FK_Notes_Users_UserId",
+                        column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ArchivedNote",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    NoteId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ArchivedNote", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Notes_Users_UserId",
+                        name: "FK_ArchivedNote_Notes_NoteId",
+                        column: x => x.NoteId,
+                        principalTable: "Notes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ArchivedNote_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -66,33 +84,38 @@ namespace APINotes.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "NoteTags",
+                name: "NoteTag",
                 columns: table => new
                 {
-                    NoteId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    TagId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                    NotesId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    TagsId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_NoteTags", x => new { x.NoteId, x.TagId });
+                    table.PrimaryKey("PK_NoteTag", x => new { x.NotesId, x.TagsId });
                     table.ForeignKey(
-                        name: "FK_NoteTags_Notes_NoteId",
-                        column: x => x.NoteId,
+                        name: "FK_NoteTag_Notes_NotesId",
+                        column: x => x.NotesId,
                         principalTable: "Notes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_NoteTags_Tags_TagId",
-                        column: x => x.TagId,
+                        name: "FK_NoteTag_Tags_TagsId",
+                        column: x => x.TagsId,
                         principalTable: "Tags",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Notes_ArchivedByUserId",
-                table: "Notes",
-                column: "ArchivedByUserId");
+                name: "IX_ArchivedNote_NoteId",
+                table: "ArchivedNote",
+                column: "NoteId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_ArchivedNote_UserId",
+                table: "ArchivedNote",
+                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Notes_UserId",
@@ -100,16 +123,19 @@ namespace APINotes.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_NoteTags_TagId",
-                table: "NoteTags",
-                column: "TagId");
+                name: "IX_NoteTag_TagsId",
+                table: "NoteTag",
+                column: "TagsId");
         }
 
         /// <inheritdoc />
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "NoteTags");
+                name: "ArchivedNote");
+
+            migrationBuilder.DropTable(
+                name: "NoteTag");
 
             migrationBuilder.DropTable(
                 name: "Notes");
