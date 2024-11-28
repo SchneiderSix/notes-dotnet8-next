@@ -19,7 +19,7 @@ export default function Header() {
         <h3>
           Notes
         </h3>
-        <HiLogout title="logout" className="mx-2" size={40} onClick={handleLogout}/>
+        <HiLogout title="logout" className="mx-2 cursor-pointer" size={40} onClick={handleLogout}/>
       </header>
     </>
   )
