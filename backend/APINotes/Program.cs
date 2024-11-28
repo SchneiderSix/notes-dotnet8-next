@@ -67,6 +67,18 @@ builder.Services.AddDbContext<DataContext>(options =>
     };
 });
 
+// Handle CORS
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: "frontApp", configurePolicy: policyBuilder =>
+    {
+        policyBuilder.WithOrigins("http://localhost:3000")
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials();
+    });
+});
+
 var app = builder.Build();
 
 // Handle migrations
@@ -99,6 +111,8 @@ app.UseSwaggerUI();
 
 // Redirect requests from http
 //app.UseHttpsRedirection();
+
+app.UseCors("frontApp");
 
 app.UseAuthorization();
 
