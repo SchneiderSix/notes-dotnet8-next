@@ -1,6 +1,6 @@
 'use client'
 
-import dynamic from "next/dynamic"
+import dynamic from 'next/dynamic'
 
 const ComponentLoginForm = dynamic(() => import('@/app/components/LoginForm'))
 
