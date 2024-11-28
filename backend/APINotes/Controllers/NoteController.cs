@@ -182,6 +182,9 @@ namespace APINotes.Controllers
                 return BadRequest("Invalid UserId");
             }
 
+            // Limit tags by 5
+            if (noteModel.Tags.Length > 5) return BadRequest("Invalid tags");
+
             // Ensure the user exists
             var user = await _context.Users.FindAsync(userGuid);
             if (user == null)
@@ -247,6 +250,9 @@ namespace APINotes.Controllers
             {
                 return BadRequest("Invalid NoteId");
             }
+
+            // Limit tags by 5
+            if (noteModel.Tags.Length > 5) return BadRequest("Invalid tags");
 
             // Retrieve the note to be updated
             var note = await _context.Notes.Include(n => n.Tags).FirstOrDefaultAsync(n => n.Id == noteGuid);
