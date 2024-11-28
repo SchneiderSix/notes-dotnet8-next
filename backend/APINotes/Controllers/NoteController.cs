@@ -47,7 +47,7 @@ namespace APINotes.Controllers
                 .Include(n => n.Tags)
                 .ToListAsync();
 
-            if (notes == null) return BadRequest("No notes found");
+            if (notes.Count == 0) return BadRequest("No notes found");
 
             var result = notes.Select(note => new NoteDto
             {
