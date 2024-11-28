@@ -63,12 +63,10 @@ namespace APINotes.Controllers
         }
 
         [HttpGet("/user")]
-        public async Task<ActionResult<List<Note>>> GetNotesFromUser([FromQuery] string username)
+        public async Task<ActionResult<List<Note>>> GetNotesFromUser([FromQuery] Guid userId)
         {
-            if (string.IsNullOrEmpty(username)) return BadRequest("Invalid credentials");
-
             var notes = await _context.Users
-                .Where(u => u.Username == username && u.IsActive)
+                .Where(u => u.Id == userId && u.IsActive)
                 .SelectMany(u => u.NotesCreated)
                 .Include(n => n.Tags)
                 .ToListAsync();
