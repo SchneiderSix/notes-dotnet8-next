@@ -3,6 +3,9 @@ using APINotes;
 using Microsoft.EntityFrameworkCore;
 using API.Services;
 using System.Threading.RateLimiting;
+using APINotes.Models;
+using Microsoft.AspNetCore.Identity;
+using BCrypt.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,8 +39,8 @@ builder.Services.AddDbContext<DataContext>(options =>
     options.UseSqlServer(connectionString);
 });
 
-// Define rate limiter middleware, limit 100 calls in 1 minute
-builder.Services.AddRateLimiter(options =>
+    // Define rate limiter middleware, limit 100 calls in 1 minute
+    builder.Services.AddRateLimiter(options =>
 {
     options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(httpContext =>
         RateLimitPartition.GetFixedWindowLimiter(
@@ -69,15 +72,27 @@ var app = builder.Build();
 // Handle migrations
 DatabaseManagementService.MigrationInitialisation(app);
 
+// Create default user
+using (var scope = app.Services.CreateScope())
+{
+    var dbContext = scope.ServiceProvider.GetRequiredService<DataContext>();
+
+    var defaultUser = new User
+    {
+        Username = "admin",
+        Password = "Aa123456!",
+        IsActive = true
+    };
+
+    defaultUser.Password = BCrypt.Net.BCrypt.HashPassword(defaultUser.Password);
+
+    // Add the user to the database
+    await dbContext.Users.AddAsync(defaultUser);
+    await dbContext.SaveChangesAsync();
+}
+
 // Use rate limiter middleware
 app.UseRateLimiter();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
 
 app.UseSwagger();
 app.UseSwaggerUI();
