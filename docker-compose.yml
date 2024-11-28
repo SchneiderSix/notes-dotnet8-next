@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+
+  sql-server:
+    image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+    environment:
+      ACCEPT_EULA: "Y"
+      SA_PASSWORD: "Secret123456!"
+      MSSQL_PID: Express
+    ports:
+      - "1433:1433"
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools/bin/sqlcmd -S localhost -U SA -P 'Secret123456!' -Q 'SELECT 1'"]
+      interval: 10s
+      timeout: 10s
+      retries: 10
+    networks:
+      - mynetwork
+
+  api:
+    build:
+      context: ./backend/APINotes
+      dockerfile: Dockerfile
+    environment:
+      front: "frontend"
+      server: "sql-server"
+      db: "UserDb"
+      user: "SA"
+      password: "Secret123456!"
+    ports:
+      - "8090:8080"
+    depends_on:
+      sql-server:
+        condition: service_healthy
+    networks:
+      - mynetwork
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
