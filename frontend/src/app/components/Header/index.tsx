@@ -16,7 +16,12 @@ export default function Header() {
   return (
     <>
       <header className="text-4xl flex justify-center items-center bg-cyan-500 shadow-lg shadow-cyan-500/50 text-white p-10">
-        <h3>
+        <h3
+        className='cursor-pointer'
+        onClick={
+          () => router.push('/')
+        }
+        >
           Notes
         </h3>
         <HiLogout title="logout" className="mx-2 cursor-pointer" size={40} onClick={handleLogout}/>
