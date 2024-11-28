@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using static APINotes.Models.NoteDto;
 
 namespace APINotes.Controllers
 {
@@ -48,7 +49,15 @@ namespace APINotes.Controllers
 
             if (notes == null) return BadRequest("No notes found");
 
-            return Ok(notes);
+            var result = notes.Select(note => new NoteDto
+            {
+                NoteId = note.Id,
+                Title = note.Title,
+                Content = note.Content,
+                Tags = note.Tags.Select(t => t.Name).ToList() // Correctly mapping Tags
+            }).ToList();
+
+            return Ok(new NoteResponse { Notes = result });
         }
 
         [HttpGet("/user")]
@@ -64,14 +73,23 @@ namespace APINotes.Controllers
 
             if (notes.Count == 0) return BadRequest("No notes found for the user or user does not exist");
 
-            return Ok(notes);
+            // Project from custom DTO
+            var result = notes.Select(note => new NoteDto
+            {
+                NoteId = note.Id,
+                Title = note.Title,
+                Content = note.Content,
+                Tags = note.Tags.Select(t => t.Name).ToList()
+            }).ToList();
+
+            return Ok(new NoteResponse { Notes = result });
         }
 
         [HttpGet("/archived")]
         public async Task<ActionResult<List<ArchivedNote>>> GetArchivedNotesFromUser([FromQuery] Guid  userId)
         {
             var notes = await _context.Users
-                .Where(u => u.Id == userId&& u.IsActive)
+                .Where(u => u.Id == userId && u.IsActive)
                 .SelectMany(u => u.ArchivedNotes)
                 .Include(n => n.Note)
                 .ThenInclude(n => n.Tags)
@@ -79,7 +97,16 @@ namespace APINotes.Controllers
 
             if (notes == null || !notes.Any()) return BadRequest("No notes found");
 
-            return Ok(notes);
+            // Project from custom DTO
+            var result = notes.Select(an => new ArchivedNoteDto
+            {
+                NoteId = an.Note.Id,
+                Title = an.Note.Title,
+                Content = an.Note.Content,
+                Tags = an.Note.Tags.Select(t => t.Name).ToList()
+            }).ToList();
+
+            return Ok(new ArchivedNoteResponse { Notes = result });
         }
 
         [HttpPost("/archived")]
