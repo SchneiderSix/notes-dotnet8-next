@@ -310,5 +310,19 @@ namespace APINotes.Controllers
 
             return Ok("Note updated successfully");
         }
+
+        [HttpPut("/delete")]
+        public async Task<ActionResult<string>> DeleteNote([FromQuery] Guid noteId)
+        {
+            var note = await _context.Notes.FindAsync(noteId);
+            if (note == null) return BadRequest("Note not found");
+
+            note.IsActive = false;
+            // Save changes to the database
+            await _context.SaveChangesAsync();
+
+            return Ok("Note deleted");
+        }
+
     }
 }
