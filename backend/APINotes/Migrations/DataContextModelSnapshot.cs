@@ -40,7 +40,7 @@ namespace APINotes.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ArchivedNote");
+                    b.ToTable("ArchivedNotes");
                 });
 
             modelBuilder.Entity("APINotes.Models.Note", b =>

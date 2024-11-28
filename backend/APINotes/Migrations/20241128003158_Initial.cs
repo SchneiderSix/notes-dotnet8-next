@@ -59,7 +59,7 @@ namespace APINotes.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ArchivedNote",
+                name: "ArchivedNotes",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
@@ -68,15 +68,15 @@ namespace APINotes.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ArchivedNote", x => x.Id);
+                    table.PrimaryKey("PK_ArchivedNotes", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ArchivedNote_Notes_NoteId",
+                        name: "FK_ArchivedNotes_Notes_NoteId",
                         column: x => x.NoteId,
                         principalTable: "Notes",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_ArchivedNote_Users_UserId",
+                        name: "FK_ArchivedNotes_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -108,13 +108,13 @@ namespace APINotes.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ArchivedNote_NoteId",
-                table: "ArchivedNote",
+                name: "IX_ArchivedNotes_NoteId",
+                table: "ArchivedNotes",
                 column: "NoteId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ArchivedNote_UserId",
-                table: "ArchivedNote",
+                name: "IX_ArchivedNotes_UserId",
+                table: "ArchivedNotes",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -132,7 +132,7 @@ namespace APINotes.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "ArchivedNote");
+                name: "ArchivedNotes");
 
             migrationBuilder.DropTable(
                 name: "NoteTag");

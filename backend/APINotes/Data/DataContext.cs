@@ -12,6 +12,8 @@ namespace APINotes.Data
 
         public DbSet<Tag> Tags { get; set; }
 
+        public DbSet<ArchivedNote> ArchivedNotes { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace APINotes.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20241127060402_Initial")]
+    [Migration("20241128003158_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -43,7 +43,7 @@ namespace APINotes.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("ArchivedNote");
+                    b.ToTable("ArchivedNotes");
                 });
 
             modelBuilder.Entity("APINotes.Models.Note", b =>
