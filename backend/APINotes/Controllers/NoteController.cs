@@ -49,9 +49,11 @@ namespace APINotes.Controllers
 
             if (notes.Count == 0) return BadRequest("No notes found");
 
+            // Project from custom DTO
             var result = notes.Select(note => new NoteDto
             {
                 NoteId = note.Id,
+                UserId = note.UserId,
                 Title = note.Title,
                 Content = note.Content,
                 Tags = note.Tags.Select(t => t.Name).ToList() // Correctly mapping Tags
@@ -77,6 +79,7 @@ namespace APINotes.Controllers
             var result = notes.Select(note => new NoteDto
             {
                 NoteId = note.Id,
+                UserId = note.UserId,
                 Title = note.Title,
                 Content = note.Content,
                 Tags = note.Tags.Select(t => t.Name).ToList()
@@ -101,6 +104,7 @@ namespace APINotes.Controllers
             var result = notes.Select(an => new ArchivedNoteDto
             {
                 NoteId = an.Note.Id,
+                UserId = an.UserId,
                 Title = an.Note.Title,
                 Content = an.Note.Content,
                 Tags = an.Note.Tags.Select(t => t.Name).ToList()

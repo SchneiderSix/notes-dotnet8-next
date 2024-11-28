@@ -3,6 +3,7 @@
     public class NoteDto
     {
         public Guid NoteId { get; set; }
+        public Guid UserId { get; set; }
         public string Title { get; set; } = null!;
         public string Content { get; set; } = null!;
         public List<string> Tags { get; set; } = new List<string>();
